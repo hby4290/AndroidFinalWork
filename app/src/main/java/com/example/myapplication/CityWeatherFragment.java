@@ -16,6 +16,8 @@ import com.example.myapplication.base.BaseFragment;
 import com.example.myapplication.bean.WeatherBean;
 import com.example.myapplication.db.DBManager;
 import com.google.gson.Gson;
+import com.squareup.picasso.Picasso;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import androidx.fragment.app.Fragment;
@@ -31,6 +33,7 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
     ImageView dayIv;
     LinearLayout futureLayout;
     ScrollView outLayout;
+    //api地址
     String url1 = "https://wis.qq.com/weather/common?source=pc&weather_type=observe|index|rise|alarm|air|tips|forecast_24h&province=";
     String url2 = "&city=";
     String city;
@@ -62,10 +65,10 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
         View view = inflater.inflate(R.layout.fragment_city_weather, container, false);
         initView(view);
         exchangeBg();
-//        可以通过activity传值获取到当前fragment加载的是那个地方的省份和天气情况
+        //可以通过activity传值获取到当前fragment加载的是那个地方的省份和天气情况
         Bundle bundle = getArguments();
         String provice_city = bundle.getString("city");
-//        获取省份
+        //获取省份
         if(provice_city.split(" ").length>1)
         {   provice =provice_city.split(" ")[0];
             city = provice_city.split(" ")[1];
@@ -75,9 +78,10 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
             city = provice_city.split(" ")[0];
             provice = provice_city.split(" ")[0];
         }
+        //拼接网址
         String url = url1+provice+url2+city;
 //          调用父类获取数据的方法
-        loadData(url);
+        loadData(url);//成功的话会走父类的ONSUCCESS方法
         return view;
     }
 
@@ -110,26 +114,31 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
 
     }
     private void parseShowData(String result) throws ParseException {
-//        使用gson解析数据
+//        使用gson解析数据，解析为weatherbean类
         WeatherBean weatherBean = new Gson().fromJson(result, WeatherBean.class);
         WeatherBean.DataBean resultsBean = weatherBean.getData();
+        //获取指数信息集合列表
         index = resultsBean.getIndex();
 //        设置TextView
-        cityTv.setText(city);
+        cityTv.setText(city);//获取城市信息
         tipTv.setText(resultsBean.getTips().getObserve().get_$0());
 //        获取今日天气情况
         WeatherBean.DataBean.ObserveBean todayDataBean = resultsBean.getObserve();
         String time = changeTime(todayDataBean.getUpdate_time());
         dateTv.setText("发布时间  "+time);
         windTv.setText("湿度 "+todayDataBean.getHumidity()+"%");
+        //设置风向
         tempRangeTv.setText("气压  "+todayDataBean.getPressure()+"hPa");
         conditionTv.setText(todayDataBean.getWeather_short());
-//        获取实时天气温度情况，需要处理字符串
+//        获取实时天气温度情况，需要处理字符串，网址中的实时天气格式比较复杂需要处理一下
+        //腾讯的api提供的数据格式比百度的简单就不用进行分割了
         tempTv.setText(todayDataBean.getDegree()+"°C");
 //        获取未来三天的天气情况，加载到layout当中
         WeatherBean.DataBean.Forecast24hBean futureList = resultsBean.getForecast_24h();
+        //for (int i = 0; i < futureList,size(); i++) {
         View itemView = LayoutInflater.from(getActivity()).inflate(R.layout.item_main_center, null);
         itemView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        //向布局中添加
         futureLayout.addView(itemView);
         TextView idateTv = itemView.findViewById(R.id.item_center_tv_date);
         TextView iconTv = itemView.findViewById(R.id.item_center_tv_con);
@@ -149,6 +158,7 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
         TextView itemprangeTv3 = itemView3.findViewById(R.id.item_center_tv_temp);
         TextView wind3 = itemView3.findViewById(R.id.item_center_tv_winddirection);
 //          获取对应的位置的天气情况
+        //WeatherBean.ResultsBean.WeatherDataBean = dataBean = futureList.get(i);
         idateTv3.setText(futureList.get_$3().getTime()+"   后天");
         iconTv3.setText(futureList.get_$3().getDay_weather());
         wind3.setText(futureList.get_$3().getDay_wind_direction());
@@ -212,6 +222,7 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
             case R.id.frag_index_tv_dress:
                 builder.setTitle("穿衣指数");
                 WeatherBean.DataBean.IndexBean.ClothesBean cloth = index.getClothes();
+                //把指数信息放到字符串中去显示
                 String msg = cloth.getInfo()+"\n"+cloth.getDetail();
                 builder.setMessage(msg);
                 builder.setPositiveButton("确定",null);
@@ -253,5 +264,9 @@ public class CityWeatherFragment extends BaseFragment implements View.OnClickLis
                 break;
         }
         builder.create().show();
+        //显示对话框
     }
+
+    //要把这个fragment添加到mainactivity的viewpaper
+    //需要用到CityFragmentPagerAdapter适配器
 }

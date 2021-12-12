@@ -9,6 +9,7 @@ public class UniteApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //全局声明
         x.Ext.init(this);
         DBManager.initDB(this);
     }

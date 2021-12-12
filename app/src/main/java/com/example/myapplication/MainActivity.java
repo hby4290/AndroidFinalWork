@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initPoint();
 //        设置最后一个城市信息
         mainVp.setCurrentItem(fragmentList.size()-1);
-//        设置ViewPager页面监听
+//        设置ViewPager页面监听，下面的圆点会随viewpaper的滑动二变化
         setPagerListener();
     }
 
@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+    //        设置ViewPager页面监听，下面的圆点会随viewpaper的滑动而变化
     private void setPagerListener() {
         /* 设置监听事件*/
         mainVp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pIv.setImageResource(R.mipmap.a1);
             pIv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) pIv.getLayoutParams();
+            //设置外间距
             lp.setMargins(0,0,20,0);
             imgList.add(pIv);
             pointLayout.addView(pIv);
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         /* 创建Fragment对象，添加到ViewPager数据源当中*/
         for (int i = 0; i < cityList.size(); i++) {
             CityWeatherFragment cwFrag = new CityWeatherFragment();
+            //bundle来获取
             Bundle bundle = new Bundle();
             bundle.putString("city",cityList.get(i));
             cwFrag.setArguments(bundle);

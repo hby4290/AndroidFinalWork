@@ -12,6 +12,7 @@ public class DBManager {
     public static SQLiteDatabase database;
     /* 初始化数据库信息*/
     public static void initDB(Context context){
+        //创建数据库辅助对象，传入context
         DBHelper dbHelper = new DBHelper(context);
         database = dbHelper.getWritableDatabase();
     }

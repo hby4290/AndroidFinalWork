@@ -14,6 +14,7 @@ public class BaseFragment extends Fragment implements Callback.CommonCallback<St
 
     public void loadData(String path){
         RequestParams params = new RequestParams(path);
+        //执行网络请求操作
         x.http().get(params,this);
     }
 //    获取数据成功时，会回调的接口

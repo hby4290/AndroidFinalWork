@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
-
+//FragmentStatePagerAdapter会即使销毁只保存当前的页面状态
 public class CityFragmentPagerAdapter extends FragmentStatePagerAdapter {
     List<Fragment>fragmentList;
     public CityFragmentPagerAdapter(FragmentManager fm, List<Fragment>fragmentLis) {
@@ -17,11 +17,13 @@ public class CityFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+
         return fragmentList.get(position);
     }
 
     @Override
     public int getCount() {
+
         return fragmentList.size();
     }
 
